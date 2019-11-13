@@ -9,8 +9,8 @@ function(pengdata)
         
     console.log(pengdata),
     console.log(getquizscrs(pengdata)),
-  //  console.log(get4allpeng(pengdata)) 
-    console.log(generatepoints(quizes))                                  
+  //console.log(get4allpeng(pengdata)) 
+    console.log(generatepoints(pengdata))                                  
     }),
     
 function (err)
@@ -44,8 +44,8 @@ var generatepoints = function (quizscrs)
     {
         
         var point= {}
-        point.y = quizscr.grade
-        point.x = index
+        point.y = quizscr.quizes.grade
+        point.x = index.quizes
         return point
         
     })
