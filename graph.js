@@ -4,17 +4,23 @@ pengdatapromise.then(
 
 function(pengdata)
     { 
-    var quizes = pengdata.quizes
-    console.log(quizes),
+    //var quizes = pengdata.quizes
+    //console.log(quizes)
         
-    console.log(pengdata),
-    console.log(getquizscrs(pengdata)),
+    var peng = pengdata[0]
+    console.log(peng)
+    getquizscrs(peng)
+    getallquiz(peng)
+    //console.log(getquizscrs(pengdata)),
+    //console.log(getallquiz(pengdata)),
+    //console.log(get4allpeng(pengdata)),
+    //console.log(getquizscrs(pengdata)),
   //console.log(get4allpeng(pengdata)) 
-    console.log(generatepoints(pengdata))                                  
+    console.log(generatepoints(pengdata)), setup(pengdata)
+    drawlines(pengdata)
     }),
     
 function (err)
-    
     {
         console.log("broken", (err))
     }
@@ -22,19 +28,23 @@ function (err)
 
 
 
-var getquizscrs = function (peng)
+var getquizscrs = function (quiz)
 {
-    return
- peng.quizes.grades
-
+    console.log(quiz.quizes[0].grade)
+  return quiz.quizes[0].grade
 }
 
+var getallquiz = function (quizes)
+{
+    console.log(quizes.quizes[0])
+    var allquizes = quizes.map(getquizscrs)
+    return allquizes
+}
 
-
-//var get4allpeng = function (peng)
-//{  
-//   peng.map(getquizscore)
-//}
+var get4allpeng = function (peng)
+{  
+   peng.map(getallquiz)
+}
 
 
 var generatepoints = function (quizscrs)
@@ -42,10 +52,9 @@ var generatepoints = function (quizscrs)
     
     var arraycoord = quizscrs.map(function(quizscr,index)
     {
-        
         var point= {}
-        point.y = quizscr.quizes.grade
-        point.x = index.quizes
+        point.y = quizscr
+        point.x = index
         return point
         
     })
@@ -57,17 +66,12 @@ var generatepoints = function (quizscrs)
 var window = {width: 500, height:500}
 var margins = {top:10, right:10, left:10, bottom: 10}
 
-
-
-
-
-
 var setup = function (array2D)
 {
     d3.select("svg")
+    .append("g")
     .attr("width",window.width)
     .attr("height",window.height)
-    .append("g")
     .attr("id","graph")
     .attr("transform", "translate("+margins.left+","+margins.top+")");
     
@@ -99,7 +103,7 @@ var setup = function (array2D)
     
    axis.append("g")
     .attr("id", "Yaxis")
-    .attr("tranform", "translate(25, "+marins.top+")")
+    .attr("tranform", "translate(25, "+margins.top+")")
     .call(Yaxis) 
 }
 
@@ -112,11 +116,12 @@ var drawlines = function(array2D, Xscale, Yscale, Cscale)
         .enter()
         .append("g")
         .attr("fill","none")
-        .attr("stroke",function (arr)
-        {
-            return Cscale(arr.name)
-        })
+       // .attr("stroke",function (arr)
+        //{
+        //    return Cscale(arr.name)
+        //})
         .attr("stroke-width",3)
+        arrays.datum(function(peng){return peng.quizes})
     }
 
 
