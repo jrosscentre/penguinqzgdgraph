@@ -67,76 +67,62 @@ var get4allpeng = function (peng)
 
 //screen and margins for graph
 var window = {width: 500, height:500}
-var margins = {top:10, right:10, left:10, bottom: 10}
+var margins = {top:10, right:50, left:50, bottom: 10}
 
 var setup = function (pengdata)
 {
     d3.select("svg")
-    .attr("width",window.width)
-    .attr("height",window.height)
+    .attr("width", screen.width)
+    .attr("height", screen.height)
     .append("g")
-    .attr("id","graph")
+    .attr("id", "graph")
     .attr("transform", "translate("+margins.left+","+margins.top+")");
     
-//defining the width based on previous para
-    var width = window.width-margins.left-margins.right;
-    var height = window.height-margins.top-margins.bottom;
+    var width = screen.width-margins.left-margins.right;
+    var height = screen.height-margins.top-margins.bottom;
     
-    var Xscale = d3.scaleLinear()
-    .domain([0.38])
-    .range([0,width])
+    var xScale = d3.scaleLinear().domain([0, 38]).range([0, width]);
+    var yScale = d3.scaleLinear().domain([0, 10]).range([height, 0]);
     
-    var Yscale = d3.scaleLinear()
-    .domain([0,10])
-    .range([0,height])
-    //retrieves color scale
-    //var Cscale = d3.scaleOrdinal(d3.schemeTableau10)
-    //assigns an axis to the scale specs
-    var Xaxis = d3.axisBottom(Xscale)
-    var Yaxis = d3.axisLeft(Yscale)
-    
-   d3.select("svg")
+    var xAxis = d3.axisBottom(xScale);
+    var yAxis = d3.axisLeft(yScale);
+    d3.select("svg").append("g").classed("axis", true);
+
+    d3.select(".axis")
     .append("g")
-    .attr("id", "#axis");
-   
-   d3.select("#axis")
+    .attr("id", "xAxis")
+    .attr("transform", "translate("+margins.left+","+(margins.top+height) + ")")
+    .call(xAxis);
+
+    d3.select(".axis")
     .append("g")
-    .attr("id", "Xaxis")
-    .attr("transform", "translate("+margins.left+", "+(margins.top+height)+")")
-    .call(Xaxis);
-    
-   d3.select("#axis")
-    .append("g")
-    .attr("id", "Yaxis")
+    .attr("id", "yAxis")
     .attr("transform", "translate(25, "+margins.top+")")
-    .call(Yaxis) ;
+    .call(yAxis);
     
-    drawlines(pengdata, Xscale, Yscale);
+    drawlines(pengdata, xScale, yScale);
 }
 
 
-var drawlines = function(pengdata, Xscale, Yscale, Cscale)
+var drawlines = function(pengdata, xScale, yScale, Cscale)
     {
         
-        var arrays = d3.select("#graph")
-        .selectAll("g")
-        .data(pengdata)
-        .enter()
-        .append("g")
-        .attr("fill","none")
-        .attr("stroke", "black")
-        .attr("stroke-width",3)
-        
-        var lineGenerator = d3.line()
-        .x(function(quizes){return quizes.day})
-        .y(function(quizes){return quizes.grade})
-        .curve(d3.curveNatural)
-      
-        arrays.datum(function(peng){console.log(peng);
-                                    return peng.quizes})
-        .append('path')
-        .attr("d",lineGenerator)
-        
+    var arrays = d3.select("#graph")
+    .selectAll("g")
+    .data(pengdata)
+    .enter()
+    .append("g")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", 3)        
+    var lineGenerator = d3.line()
+    .x(function(arr, index){ return xScale(index) })
+    .y(function(arr) {return yScale(arr.grade);})
+    .curve(d3.curveNatural);
+    
+    arrays.append("path")
+    .datum(function(obj){ return obj.quizes })
+    .attr("d", lineGenerator);        
     }
 
 
